@@ -1,0 +1,12 @@
+.mvn/wrapper/maven-wrapper.jar
+
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+.idea
+.vscode/
+
+*.iws
+*.iml
+*.ipr

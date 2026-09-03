@@ -1,0 +1,8 @@
+POST http://localhost:9090/api/estudiante
+Content-Type: application/json
+
+{
+  "nombre": "joaquin",
+  "correo": "joaquin@uamv.edu.ni",
+  "edad": 21
+}

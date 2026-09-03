@@ -1,0 +1,8 @@
+PUT http://localhost:9090/api/estudiante/1
+Content-Type: application/json
+
+{
+  "nombre": "nuevo joaquin",
+  "correo": "nuevo-joaquin@uamv.edu.ni",
+  "edad": 22
+}

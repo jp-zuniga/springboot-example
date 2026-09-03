@@ -1,0 +1,21 @@
+name: springbootexample
+
+services:
+  postgres:
+    environment:
+      POSTGRES_DB: example
+      POSTGRES_PASSWORD: springboot-example
+      POSTGRES_USER: springboot
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U springboot -d springboot-example"]
+      timeout: 5s
+    image: postgres:18
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:
