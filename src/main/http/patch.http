@@ -1,4 +1,4 @@
-PUT http://localhost:9090/api/estudiante/1
+PATCH http://localhost:9090/api/estudiante/1
 Content-Type: application/json
 
 {

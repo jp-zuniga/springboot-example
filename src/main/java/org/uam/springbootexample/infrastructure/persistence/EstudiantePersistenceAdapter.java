@@ -1,8 +1,9 @@
 package org.uam.springbootexample.infrastructure.persistence;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import org.uam.springbootexample.application.repositories.EstudianteRepository;
@@ -34,8 +35,8 @@ import org.uam.springbootexample.infrastructure.persistence.repositories.SpringD
         return repository.findById(id).map(mapper::toDomain);
     }
 
-    @Override public List<Estudiante> findAll() {
-        return repository.findAll().stream().map(mapper::toDomain).toList();
+    @Override public Page<Estudiante> findAll(Pageable pageable) {
+        return repository.findAll(pageable).map(mapper::toDomain);
     }
 
     @Override public void deleteById(Long id) {

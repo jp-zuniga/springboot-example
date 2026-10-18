@@ -1,7 +1,9 @@
 package org.uam.springbootexample.application.repositories;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.uam.springbootexample.domain.models.Estudiante;
 
@@ -12,7 +14,7 @@ public interface EstudianteRepository {
 
     Optional<Estudiante> findById(Long id);
 
-    List<Estudiante> findAll();
+    Page<Estudiante> findAll(Pageable pageable);
 
     void deleteById(Long id);
 }

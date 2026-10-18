@@ -1,8 +1,9 @@
 package org.uam.springbootexample.application.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,14 @@ import org.uam.springbootexample.domain.models.Estudiante;
     }
 
     @Transactional public Estudiante post(Estudiante estudiante) {
+        estudiante.puedeRegistrar();
+
         return repository.create(estudiante);
     }
 
     @Transactional public Estudiante put(Estudiante estudiante) {
+        estudiante.puedeRegistrar();
+
         return repository.update(estudiante);
     }
 
@@ -50,8 +55,9 @@ import org.uam.springbootexample.domain.models.Estudiante;
         return repository.findById(id);
     }
 
-    @Transactional(readOnly = true) public List<Estudiante> getAllEstudiantes() {
-        return repository.findAll();
+    @Transactional(readOnly = true)
+    public Page<Estudiante> getAllEstudiantes(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Transactional public void delete(Long id) {

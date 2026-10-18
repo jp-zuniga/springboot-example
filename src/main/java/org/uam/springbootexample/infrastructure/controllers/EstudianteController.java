@@ -1,7 +1,12 @@
 package org.uam.springbootexample.infrastructure.controllers;
 
-import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +15,7 @@ import org.uam.springbootexample.application.services.EstudianteService;
 import org.uam.springbootexample.domain.models.Estudiante;
 import org.uam.springbootexample.infrastructure.dto.EstudianteRequest;
 import org.uam.springbootexample.infrastructure.dto.EstudianteResponse;
+import org.uam.springbootexample.infrastructure.dto.PageResponse;
 import org.uam.springbootexample.infrastructure.persistence.mappers.EstudianteMapper;
 
 @RestController @RequestMapping("/api/estudiante") public class EstudianteController {
@@ -21,11 +27,21 @@ import org.uam.springbootexample.infrastructure.persistence.mappers.EstudianteMa
         this.service = service;
     }
 
-    @GetMapping public ResponseEntity<List<EstudianteResponse>> getAll() {
-        List<EstudianteResponse> estudiantes =
-            service.getAllEstudiantes().stream().map(mapper::toResponse).toList();
+    @GetMapping public ResponseEntity<PageResponse<EstudianteResponse>> getAll(
+        @RequestParam(defaultValue = "0")
+        @Min(value = 0, message = "La página no puede ser negativa.") int page,
 
-        return ResponseEntity.ok(estudiantes);
+        @RequestParam(defaultValue = "10")
+        @Min(value = 1, message = "El tamaño de página debe ser al menos 1.")
+        @Max(value = 50, message = "El tamaño de página no puede ser mayor a 50.")
+        int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+
+        return ResponseEntity.ok(PageResponse.from(
+            service.getAllEstudiantes(pageable),
+            mapper::toResponse
+        ));
     }
 
     @GetMapping("/{id}")
@@ -36,26 +52,22 @@ import org.uam.springbootexample.infrastructure.persistence.mappers.EstudianteMa
     }
 
     @PostMapping public ResponseEntity<EstudianteResponse> post(
-        @RequestBody EstudianteRequest request
+        @Valid @RequestBody EstudianteRequest request
     ) {
-        Estudiante estudiante = mapper.fromRequest(null, request);
-
-        estudiante.puedeRegistrar();
+        Estudiante creado = service.post(mapper.fromRequest(null, request));
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(mapper.toResponse(service.post(estudiante)));
+            .body(mapper.toResponse(creado));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EstudianteResponse> put(
         @PathVariable Long id,
-        @RequestBody EstudianteRequest request
+        @Valid @RequestBody EstudianteRequest request
     ) {
-        Estudiante estudiante = mapper.fromRequest(id, request);
+        Estudiante actualizado = service.put(mapper.fromRequest(id, request));
 
-        estudiante.puedeRegistrar();
-
-        return ResponseEntity.ok(mapper.toResponse(service.put(estudiante)));
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
     @PatchMapping("/{id}")
@@ -63,10 +75,7 @@ import org.uam.springbootexample.infrastructure.persistence.mappers.EstudianteMa
         @PathVariable Long id,
         @RequestBody EstudianteRequest request
     ) {
-        Estudiante cambios =
-            new Estudiante(id, request.nombre(), request.correo(), request.edad());
-
-        Estudiante actualizado = service.patch(id, cambios);
+        Estudiante actualizado = service.patch(id, mapper.fromRequest(id, request));
 
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
