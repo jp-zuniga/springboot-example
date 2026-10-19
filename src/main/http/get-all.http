@@ -1,9 +1,0 @@
-GET http://localhost:9090/api/estudiante?page=0&size=3
-
-###
-
-GET http://localhost:9090/api/estudiante?page=1&size=3
-
-###
-
-GET http://localhost:9090/api/estudiante?page=0&size=5
